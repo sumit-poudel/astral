@@ -1,0 +1,19 @@
+package views
+
+import "github.com/sumit-poudel/astral/views/templates"
+
+templ index() {
+	<div>
+		hello world
+	</div>
+}
+
+templ InderRenderer() {
+	<html>
+		@templates.Head("index - Astral")
+		<body class=" dark:bg-zinc-950 dark:text-white ">
+			@templates.NavBar()
+			@index()
+		</body>
+	</html>
+}

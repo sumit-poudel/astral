@@ -1,0 +1,19 @@
+package views
+
+import "github.com/sumit-poudel/astral/views/templates"
+
+templ shop() {
+	<div>
+		shop test
+	</div>
+}
+
+templ ShopRenderer() {
+	<html>
+		@templates.Head("shop - Astral")
+		<body>
+			@templates.NavBar()
+			@shop()
+		</body>
+	</html>
+}
