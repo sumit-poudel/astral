@@ -6,16 +6,29 @@
 
 a minimal digital content marketplace with powered by
 1. Go
-2. sqlc
-3. datastar
-4. (paxi sochxu aba yo)
+2. pg
+3. sqlc
+4. datastar
+5. goose
 
 ```
+├── assets
+│   └── logo.svg
 ├── cmd
 │   └── web
 │       ├── handler.go
 │       ├── main.go
 │       └── routes.go
+├── data
+│   ├── migrations
+│   │   └── 20260917123431_astral.sql
+│   └── queries
+│       └── users.sql
+├── internal
+│   └── db
+│       ├── db.go
+│       ├── models.go
+│       └── users.sql.go
 ├── views
 │   ├── static
 │   │   ├── assets
@@ -34,6 +47,11 @@ a minimal digital content marketplace with powered by
 │   ├── shop.templ
 │   ├── shop_templ.go
 │   └── views.go
+├── .air.toml
+├── .env.example
+├── .gitignore
 ├── go.mod
-└── go.sum
+├── go.sum
+├── README.md
+└── sqlc.yaml
 ```

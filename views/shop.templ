@@ -1,19 +1,26 @@
 package views
 
 import "github.com/sumit-poudel/astral/views/templates"
+import "github.com/sumit-poudel/astral/internal/db"
 
-templ shop() {
+templ shop(users []db.User) {
 	<div>
-		shop test
+		<h1>Shop</h1>
+		for _, user := range users {
+			<div>
+				<p>{ user.ID }</p>
+				<p>{ user.Name.String }</p>
+			</div>
+		}
 	</div>
 }
 
-templ ShopRenderer() {
+templ ShopRenderer(users []db.User) {
 	<html>
 		@templates.Head("shop - Astral")
 		<body>
 			@templates.NavBar()
-			@shop()
+			@shop(users)
 		</body>
 	</html>
 }

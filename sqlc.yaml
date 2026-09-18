@@ -1,0 +1,12 @@
+version: '2'
+cloud:
+  project: '01M2S18Y73TRCFSFYVPYJP5MNV'
+sql:
+  - engine: 'postgresql'
+    queries: 'data/queries'
+    schema: 'data/migrations'
+    gen:
+      go:
+        package: 'db'
+        out: 'internal/db'
+        sql_package: 'pgx/v5'
