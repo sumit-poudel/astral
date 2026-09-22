@@ -6,42 +6,53 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/alexedwards/scs/pgxstore"
+	"github.com/alexedwards/scs/v2"
+	"github.com/go-playground/form"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/sumit-poudel/astral/internal/db"
 )
 
 type application struct {
-	logger  *slog.Logger
-	queries *db.Queries
+	logger         *slog.Logger
+	queries        *db.Queries
+	sessionManager *scs.SessionManager
+	formDecoder    *form.Decoder
 }
 
 func main() {
 
-	// load env
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	// logger
+	dsn := os.Getenv("GOOSE_DBSTRING")
+
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	}))
 
-	// urlExample := "postgres://username:password@localhost:5432/database_name"
-	conn, err := pgx.Connect(context.Background(), os.Getenv("GOOSE_DBSTRING"))
+	pool, err := openDB(dsn)
+
 	if err != nil {
 		logger.Error("Unable to connect to database: ", slog.String("pg", err.Error()))
 		os.Exit(1)
 	}
-	defer conn.Close(context.Background())
+	defer pool.Close()
 
-	// server
+	sessionManager := scs.New()
+	sessionManager.Lifetime = 24 * time.Hour
+	sessionManager.Store = pgxstore.New(pool)
+
 	app := &application{
-		logger:  logger,
-		queries: db.New(conn),
+		logger:         logger,
+		queries:        db.New(pool),
+		sessionManager: sessionManager,
+		formDecoder:    form.NewDecoder(),
 	}
 	srv := &http.Server{
 		Handler:  app.router(),
@@ -53,4 +64,15 @@ func main() {
 		logger.Error("Error: ", slog.String("err", err.Error()))
 		os.Exit(1)
 	}
+}
+
+func openDB(dns string) (*pgxpool.Pool, error) {
+	pool, err := pgxpool.New(context.Background(), dns)
+	if err != nil {
+		return nil, err
+	}
+	if err := pool.Ping(context.Background()); err != nil {
+		return nil, err
+	}
+	return pool, err
 }
