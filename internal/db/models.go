@@ -5,10 +5,87 @@
 package db
 
 import (
+	"database/sql/driver"
+	"fmt"
+
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type EnmUsersType string
+
+const (
+	EnmUsersTypeSeller EnmUsersType = "seller"
+	EnmUsersTypeUser   EnmUsersType = "user"
+	EnmUsersTypeAdmin  EnmUsersType = "admin"
+)
+
+func (e *EnmUsersType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = EnmUsersType(s)
+	case string:
+		*e = EnmUsersType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for EnmUsersType: %T", src)
+	}
+	return nil
+}
+
+type NullEnmUsersType struct {
+	EnmUsersType EnmUsersType
+	Valid        bool // Valid is true if EnmUsersType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullEnmUsersType) Scan(value interface{}) error {
+	if value == nil {
+		ns.EnmUsersType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.EnmUsersType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullEnmUsersType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.EnmUsersType), nil
+}
+
+type Product struct {
+	Pid       int32
+	Pname     string
+	Preview   pgtype.Text
+	Path      pgtype.Text
+	SellerID  int32
+	Price     int32
+	Discount  pgtype.Int4
+	CreatedAt pgtype.Timestamptz
+}
+
+type Review struct {
+	Rid       int32
+	Sid       int32
+	Message   pgtype.Text
+	Stars     pgtype.Int4
+	CreatedAt pgtype.Timestamptz
+}
+
+type Sale struct {
+	Sid       int32
+	Pid       int32
+	Uid       int32
+	IsPaid    bool
+	CreatedAt pgtype.Timestamptz
+}
+
 type User struct {
-	ID   int32
-	Name pgtype.Text
+	Uid       int32
+	Name      string
+	Email     string
+	Password  string
+	Type      EnmUsersType
+	CreatedAt pgtype.Timestamptz
 }

@@ -1,1 +1,48 @@
 @import "tailwindcss";
+
+@theme {
+	--color-surface: var(--surface);
+	--color-surface-muted: var(--surface-muted);
+	--color-surface-subtle: var(--surface-subtle);
+
+	--color-border: var(--border);
+
+	--color-foreground: var(--foreground);
+	--color-foreground-muted: var(--foreground-muted);
+	--color-foreground-subtle: var(--foreground-subtle);
+
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+}
+
+/* Light theme */
+:root {
+	--surface: #ffffff;
+	--surface-muted: #f4f4f5;
+	--surface-subtle: #fafafa;
+
+	--border: #e4e4e7;
+
+	--foreground: #18181b;
+	--foreground-muted: #71717a;
+	--foreground-subtle: #a1a1aa;
+
+	--primary: #09090b;
+	--primary-foreground: #fafafa;
+}
+
+/* Dark theme */
+.dark {
+	--surface: #09090b;
+	--surface-muted: #18181b;
+	--surface-subtle: #0f0f11;
+
+	--border: #27272a;
+
+	--foreground: #fafafa;
+	--foreground-muted: #a1a1aa;
+	--foreground-subtle: #71717a;
+
+	--primary: #fafafa;
+	--primary-foreground: #09090b;
+}
