@@ -14,10 +14,12 @@ templ Signup() {
 				<h1 class="text-2xl font-semibold tracking-tight text-foreground">
 					Welcome aboard
 				</h1>
-				<p class="mt-2 text-sm text-foreground-muted"></p>
-				Create your account. Get started.
+				<p class="mt-2 text-sm text-foreground-muted">
+					Create your account. Get started.
+				</p>
 			</div>
-			<form class="flex flex-col gap-5" action="/signup" method="POST">
+			<div id="error"></div>
+			<form class="flex flex-col gap-5" data-on:submit="@post('/signup', {contentType: 'form'})">
 				<div class="flex flex-col gap-2">
 					<label
 						for="name"

@@ -9,6 +9,34 @@ import (
 	"context"
 )
 
+const emailTaken = `-- name: EmailTaken :one
+SELECT EXISTS ( SELECT 1 FROM users WHERE email = $1 ) AS found
+`
+
+func (q *Queries) EmailTaken(ctx context.Context, email string) (bool, error) {
+	row := q.db.QueryRow(ctx, emailTaken, email)
+	var found bool
+	err := row.Scan(&found)
+	return found, err
+}
+
+const loginUser = `-- name: LoginUser :one
+SELECT uid, name, password FROM users WHERE email = $1
+`
+
+type LoginUserRow struct {
+	Uid      int32
+	Name     string
+	Password string
+}
+
+func (q *Queries) LoginUser(ctx context.Context, email string) (LoginUserRow, error) {
+	row := q.db.QueryRow(ctx, loginUser, email)
+	var i LoginUserRow
+	err := row.Scan(&i.Uid, &i.Name, &i.Password)
+	return i, err
+}
+
 const signupUser = `-- name: SignupUser :one
 INSERT INTO users (name,email,password) VALUES ($1,$2,$3) RETURNING uid
 `

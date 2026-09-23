@@ -81,6 +81,12 @@ type Sale struct {
 	CreatedAt pgtype.Timestamptz
 }
 
+type Session struct {
+	Token  string
+	Data   []byte
+	Expiry pgtype.Timestamptz
+}
+
 type User struct {
 	Uid       int32
 	Name      string

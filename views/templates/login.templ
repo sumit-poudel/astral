@@ -18,7 +18,8 @@ templ Login() {
 					Sign in to your account to continue.
 				</p>
 			</div>
-			<form class="flex flex-col gap-5" action="">
+			<div id="error"></div>
+			<form class="flex flex-col gap-5" data-on:submit="@post('/login', {contentType: 'form'})">
 				<div class="flex flex-col gap-2">
 					<label
 						for="email"

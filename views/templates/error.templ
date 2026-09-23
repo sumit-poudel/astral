@@ -1,0 +1,13 @@
+package templates
+
+type err map[string]string
+
+templ Error(err err) {
+	<div id="error">
+		<div class="mb-8 text-center rounded-2xl p-2 border border-border bg-surface-muted">
+			for _,er := range err {
+				<p id="error" class="text-sm text-error">{ er }</p>
+			}
+		</div>
+	</div>
+}

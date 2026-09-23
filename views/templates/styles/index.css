@@ -13,6 +13,8 @@
 
 	--color-primary: var(--primary);
 	--color-primary-foreground: var(--primary-foreground);
+
+	--color-error: var(--error);
 }
 
 /* Light theme */
@@ -29,6 +31,8 @@
 
 	--primary: #09090b;
 	--primary-foreground: #fafafa;
+
+	--error: #f87171;
 }
 
 /* Dark theme */
@@ -45,4 +49,6 @@
 
 	--primary: #fafafa;
 	--primary-foreground: #09090b;
+
+	--error: #f87171;
 }
