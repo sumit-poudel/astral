@@ -6,7 +6,7 @@ fmt:
 vet: fmt
 	go vet ./...
 
-templ: vet
+templ:
 	templ generate --watch
 
 css:

@@ -20,6 +20,17 @@ func (q *Queries) EmailTaken(ctx context.Context, email string) (bool, error) {
 	return found, err
 }
 
+const exists = `-- name: Exists :one
+SELECT EXISTS (SELECT 1 FROM users WHERE uid = $1 ) AS found
+`
+
+func (q *Queries) Exists(ctx context.Context, uid int32) (bool, error) {
+	row := q.db.QueryRow(ctx, exists, uid)
+	var found bool
+	err := row.Scan(&found)
+	return found, err
+}
+
 const loginUser = `-- name: LoginUser :one
 SELECT uid, name, password FROM users WHERE email = $1
 `

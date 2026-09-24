@@ -1,0 +1,20 @@
+package templates
+
+templ Options(trigger templ.Component) {
+	<div class="relative">
+		<button
+			type="button"
+			class="shrink-0 rounded-full p-1.5 text-foreground-muted transition hover:bg-surface-muted hover:text-foreground"
+			data-on:click="$optionsOpen = !$optionsOpen"
+		>
+			@trigger
+		</button>
+		<div
+			class="absolute right-0 top-full z-50 mt-2 w-fit rounded-xl border border-border bg-surface py-2 px-4 shadow-lg"
+			data-show="$optionsOpen"
+			style="display: none"
+		>
+			{ children... }
+		</div>
+	</div>
+}

@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"runtime/debug"
+
+	"github.com/sumit-poudel/astral/cmd/web/model"
 )
 
 func (app *application) clientError(w http.ResponseWriter, code int) {
@@ -27,4 +29,24 @@ func (app *application) decodeForm(r *http.Request, dest any) (err error) {
 		return err
 	}
 	return nil
+}
+
+func (app *application) newTemplateData(r *http.Request) model.TemplateData {
+	if app.isAuthenticated(r) {
+		return model.TemplateData{
+			UserName:        r.Context().Value(userNameConkextKey).(string),
+			IsAuthenticated: true,
+		}
+	}
+	return model.TemplateData{
+		IsAuthenticated: false,
+	}
+}
+
+func (app *application) isAuthenticated(r *http.Request) bool {
+	isAuthenticated, ok := r.Context().Value(isAuthenticatedContextKey).(bool)
+	if !ok {
+		return false
+	}
+	return isAuthenticated
 }

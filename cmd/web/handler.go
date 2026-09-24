@@ -11,14 +11,30 @@ import (
 	"github.com/sumit-poudel/astral/views/templates"
 )
 
+func (app *application) logOut(w http.ResponseWriter, r *http.Request) {
+	err := app.sessionManager.RenewToken(r.Context())
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	app.sessionManager.Remove(r.Context(), "authenticatedUserID")
+	app.sessionManager.Remove(r.Context(), "authenticatedUserName")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (app *application) test(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("this is protected"))
+}
+
 func (app *application) getIndex(w http.ResponseWriter, r *http.Request) {
-	id := app.sessionManager.GetInt32(r.Context(), "authenticatedUserID")
-	views.InderRenderer(id).Render(r.Context(), w)
+	data := app.newTemplateData(r)
+	views.InderRenderer(data).Render(r.Context(), w)
 }
 
 func (app *application) getLogin(w http.ResponseWriter, r *http.Request) {
 	sse := datastar.NewSSE(w, r)
 	sse.PatchElementTempl(templates.Login())
+	sse.PatchSignals([]byte(`{"modalOpen": true}`))
 }
 
 func (app *application) getSignup(w http.ResponseWriter, r *http.Request) {
