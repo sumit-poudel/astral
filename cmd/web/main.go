@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -25,16 +24,14 @@ type application struct {
 
 func main() {
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	dsn := os.Getenv("GOOSE_DBSTRING")
-
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	}))
+	if err := godotenv.Load(); err != nil {
+		logger.Warn(".env file not found")
+	}
+
+	dsn := os.Getenv("GOOSE_DBSTRING")
 
 	pool, err := openDB(dsn)
 

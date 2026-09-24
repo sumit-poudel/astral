@@ -1,0 +1,58 @@
+networks:
+  private:
+    driver: bridge
+  public:
+    driver: bridge
+
+volumes:
+  pgdata:
+
+services:
+  astral:
+    build: .
+    restart: always
+    ports:
+      - "8090:8090"
+    networks:
+      - public
+      - private
+    environment:
+      GOOSE_DBSTRING: postgres://admin:admin@database:5432/astral
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+      database:
+        condition: service_healthy
+
+  database:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: astral
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    networks:
+      - private
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  migration:
+    build: .
+    command: goose up
+    environment:
+      GOOSE_DRIVER: postgres
+      GOOSE_DBSTRING: postgres://admin:admin@database:5432/astral
+      GOOSE_MIGRATION_DIR: ./data/migrations
+      SQLC_AUTH_TOKEN: sqlc_01M2S1A31G47EA8CDAAAVC4ND3
+    networks:
+      - private
+    depends_on:
+      database:
+        condition: service_healthy
