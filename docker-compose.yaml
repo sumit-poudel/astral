@@ -1,11 +1,6 @@
 networks:
-  private:
-    driver: bridge
   public:
     driver: bridge
-
-volumes:
-  pgdata:
 
 services:
   astral:
@@ -17,37 +12,12 @@ services:
       - "8090:8090"
     networks:
       - public
-      - private
     depends_on:
       migration:
         condition: service_completed_successfully
-      database:
-        condition: service_healthy
-
-  database:
-    image: postgres:latest
-    restart: unless-stopped
-    env_file:
-      - .env
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql
-    networks:
-      - private
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d postgres" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
   migration:
     build: .
     command: goose up
     env_file:
       - .env
-    networks:
-      - private
-    depends_on:
-      database:
-        condition: service_healthy
